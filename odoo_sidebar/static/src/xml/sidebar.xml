@@ -11,7 +11,7 @@
                     </a>
                     <div class="dropdown-menu d-block" role="menu">
                         <div>
-                            <img src="/odoo_sidebar/static/src/img/company_logo.jpeg" class="img img-fluid mb-5 mt-2"/>
+                            <img src="/odoo_sidebar/static/src/img/company_logo1.jpeg" class="img img-fluid mb-5 mt-2"/>
                         </div>
                         <t t-foreach="menuService.getApps()" t-as="app">
                             <a role="menuitem" t-att-href="getMenuItemHref(app)"

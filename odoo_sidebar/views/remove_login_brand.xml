@@ -11,7 +11,7 @@
                 </t>
                 <t t-set="body_classname" t-value="'bg-100'"/>
 
-                
+
                 <div class="container mb-5 pb-5">
                     <div t-attf-class="card border-0 mx-auto mt-5 bg-100 {{login_card_classes}} o_database_list" style="max-width: 300px;">
                         <div class="card-body">
