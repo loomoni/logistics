@@ -24,6 +24,7 @@
     ],
     'data': [
         'views/menu.xml',
+        'views/remove_login_brand.xml',
     ],
     'assets': {
         'web.assets_qweb': [
