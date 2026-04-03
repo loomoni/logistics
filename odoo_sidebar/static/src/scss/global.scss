@@ -1,0 +1,25 @@
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+.o_web_client {
+    background-color: #fff;
+}
+
+.o_action_manager {
+    padding-left: 220px;
+
+    @media (min-width: $breakpoint-md) {
+        padding-left: 0;
+    }
+    @media (min-width: $breakpoint-lg) {
+        padding-left: 220px;
+    }
+    @media (min-width: $breakpoint-xl) {
+        padding-left: 220px;
+    }
+}
+
+.o_tooltip.o_tooltip_visible {
+    display: none;
+}
