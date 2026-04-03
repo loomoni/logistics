@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Trip Form View -->
+    <record id="trip_form_view" model="ir.ui.view">
+        <field name="name">apala.trip.form</field>
+        <field name="model">apala.trip</field>
+        <field name="arch" type="xml">
+            <form string="Trip">
+                <header>
+                    <button name="action_dispatch" string="Dispatch" type="object"
+                            states="draft" class="oe_highlight"/>
+                    <button name="action_en_route" string="En Route" type="object"
+                            states="dispatched" class="oe_highlight"/>
+                    <button name="action_arrive" string="Mark Arrived" type="object"
+                            states="en_route" class="oe_highlight"/>
+                    <button name="action_close" string="Close Trip" type="object"
+                            states="arrived" class="oe_highlight"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,dispatched,en_route,arrived,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="transport_order_id"/>
+                            <field name="vehicle_id"/>
+                            <field name="driver_id"/>
+                            <field name="co_driver_id"/>
+                            <field name="route_id"/>
+                        </group>
+                        <group>
+                            <field name="departure_date"/>
+                            <field name="estimated_arrival"/>
+                            <field name="arrival_date"/>
+                            <field name="purchase_order_id"/>
+                            <field name="analytic_account_id"/>
+                        </group>
+                    </group>
+                    <group string="Odometer &amp; Fuel">
+                        <group>
+                            <field name="odometer_start"/>
+                            <field name="odometer_end"/>
+                            <field name="distance_km"/>
+                        </group>
+                        <group>
+                            <field name="fuel_consumed_l"/>
+                            <field name="total_expenses"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Expenses">
+                            <field name="expense_ids">
+                                <tree editable="bottom">
+                                    <field name="expense_type"/>
+                                    <field name="description"/>
+                                    <field name="amount" widget="monetary"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="date"/>
+                                    <field name="employee_id"/>
+                                    <field name="receipt_ref"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Waypoints">
+                            <field name="waypoint_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="location"/>
+                                    <field name="stop_type"/>
+                                    <field name="planned_arrival"/>
+                                    <field name="actual_arrival"/>
+                                    <field name="planned_depart"/>
+                                    <field name="actual_depart"/>
+                                    <field name="odometer"/>
+                                    <field name="notes"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Advance &amp; Reconciliation">
+                            <group>
+                                <group string="Cash Advance">
+                                    <field name="cash_advance_amount"/>
+                                    <field name="cash_advance_date"/>
+                                    <field name="cash_advance_issued_by"/>
+                                </group>
+                                <group string="Reconciliation">
+                                    <field name="total_expenses"/>
+                                    <field name="cash_returned_amount"/>
+                                    <field name="advance_balance"/>
+                                    <field name="advance_reconciled"/>
+                                </group>
+                            </group>
+                            <div attrs="{'invisible': ['|', ('state','!=','closed'), ('advance_reconciled','=',True)]}">
+                                <button name="action_reconcile_advance" string="Reconcile Advance"
+                                        type="object" class="oe_highlight"/>
+                            </div>
+                        </page>
+                        <page string="Transport Orders">
+                            <field name="transport_order_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="customer_id"/>
+                                    <field name="cargo_type"/>
+                                    <field name="weight_kg"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Attachments">
+                            <field name="attachment_ids" widget="many2many_binary"/>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes" placeholder="Trip notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Trip List View -->
+    <record id="trip_list_view" model="ir.ui.view">
+        <field name="name">apala.trip.tree</field>
+        <field name="model">apala.trip</field>
+        <field name="arch" type="xml">
+            <tree string="Trips" decoration-info="state=='draft'"
+                  decoration-warning="state in ('dispatched','en_route')"
+                  decoration-success="state=='closed'">
+                <field name="name"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="route_id"/>
+                <field name="departure_date"/>
+                <field name="arrival_date"/>
+                <field name="distance_km"/>
+                <field name="total_expenses"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Trip Search View -->
+    <record id="trip_search_view" model="ir.ui.view">
+        <field name="name">apala.trip.search</field>
+        <field name="model">apala.trip</field>
+        <field name="arch" type="xml">
+            <search string="Search Trips">
+                <field name="name"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="route_id"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Dispatched" name="dispatched" domain="[('state','=','dispatched')]"/>
+                <filter string="En Route" name="en_route" domain="[('state','=','en_route')]"/>
+                <filter string="Arrived" name="arrived" domain="[('state','=','arrived')]"/>
+                <filter string="Closed" name="closed" domain="[('state','=','closed')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Vehicle" name="group_vehicle" context="{'group_by': 'vehicle_id'}"/>
+                    <filter string="Driver" name="group_driver" context="{'group_by': 'driver_id'}"/>
+                    <filter string="Route" name="group_route" context="{'group_by': 'route_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Trip Action -->
+    <record id="action_apala_trip" model="ir.actions.act_window">
+        <field name="name">Trips</field>
+        <field name="res_model">apala.trip</field>
+        <field name="view_mode">tree,form,graph,calendar</field>
+        <field name="search_view_id" ref="trip_search_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No trips yet
+            </p>
+        </field>
+    </record>
+
+</odoo>

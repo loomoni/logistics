@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Activate TZS Currency -->
+        <record id="base.TZS" model="res.currency">
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Tanzania VAT 18% — Sales -->
+        <record id="tax_vat_18_sale" model="account.tax">
+            <field name="name">VAT 18% (TZ)</field>
+            <field name="type_tax_use">sale</field>
+            <field name="amount">18.0</field>
+            <field name="amount_type">percent</field>
+            <field name="description">VAT 18%</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- Tanzania VAT 18% — Purchase -->
+        <record id="tax_vat_18_purchase" model="account.tax">
+            <field name="name">VAT 18% Purchase (TZ)</field>
+            <field name="type_tax_use">purchase</field>
+            <field name="amount">18.0</field>
+            <field name="amount_type">percent</field>
+            <field name="description">VAT 18%</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+    </data>
+</odoo>

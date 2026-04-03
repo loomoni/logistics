@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Top-level App Menu -->
+    <menuitem id="menu_apala_logistics_root"
+              name="Apala Logistics"
+              web_icon="apala_logistics,static/description/icon.png"
+              sequence="50"/>
+
+    <!-- ========== Dashboard ========== -->
+    <menuitem id="menu_dashboard"
+              name="Dashboard"
+              parent="menu_apala_logistics_root"
+              action="action_apala_dashboard"
+              sequence="1"/>
+
+    <!-- ========== Transport ========== -->
+    <menuitem id="menu_transport"
+              name="Transport"
+              parent="menu_apala_logistics_root"
+              sequence="10"/>
+
+    <menuitem id="menu_transport_orders"
+              name="Transport Orders"
+              parent="menu_transport"
+              action="action_apala_transport_order"
+              sequence="10"/>
+
+    <menuitem id="menu_trips"
+              name="Trips"
+              parent="menu_transport"
+              action="action_apala_trip"
+              sequence="20"/>
+
+    <menuitem id="menu_routes_transport"
+              name="Routes"
+              parent="menu_transport"
+              action="action_apala_route"
+              sequence="30"/>
+
+    <!-- ========== Cargo & Freight ========== -->
+    <menuitem id="menu_cargo_freight"
+              name="Cargo &amp; Freight"
+              parent="menu_apala_logistics_root"
+              sequence="20"/>
+
+    <menuitem id="menu_freight_orders"
+              name="Freight Orders"
+              parent="menu_cargo_freight"
+              action="action_apala_freight_order"
+              sequence="10"/>
+
+    <menuitem id="menu_cargo_manifests"
+              name="Cargo Manifests"
+              parent="menu_cargo_freight"
+              action="action_apala_cargo_manifest"
+              sequence="20"/>
+
+    <menuitem id="menu_customs_documents"
+              name="Customs Documents"
+              parent="menu_cargo_freight"
+              action="action_apala_customs_document"
+              sequence="30"/>
+
+    <!-- ========== Warehouse & Storage ========== -->
+    <menuitem id="menu_warehouse_storage"
+              name="Warehouse &amp; Storage"
+              parent="menu_apala_logistics_root"
+              sequence="30"/>
+
+    <menuitem id="menu_storage_contracts"
+              name="Storage Contracts"
+              parent="menu_warehouse_storage"
+              action="action_apala_storage_contract"
+              sequence="10"/>
+
+    <!-- ========== Expenses ========== -->
+    <menuitem id="menu_expenses"
+              name="Expenses"
+              parent="menu_apala_logistics_root"
+              sequence="40"/>
+
+    <menuitem id="menu_trip_expenses"
+              name="Trip Expenses"
+              parent="menu_expenses"
+              action="action_apala_trip_expense"
+              sequence="10"/>
+
+    <!-- ========== Configuration ========== -->
+    <menuitem id="menu_configuration"
+              name="Configuration"
+              parent="menu_apala_logistics_root"
+              sequence="90"
+              groups="group_manager"/>
+
+    <menuitem id="menu_config_routes"
+              name="Routes"
+              parent="menu_configuration"
+              action="action_apala_route"
+              sequence="10"/>
+
+    <menuitem id="menu_config_settings"
+              name="Settings"
+              parent="menu_configuration"
+              action="base_setup.action_general_configuration"
+              sequence="20"/>
+
+</odoo>

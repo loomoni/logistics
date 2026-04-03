@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Trip Expense Form View -->
+    <record id="trip_expense_form_view" model="ir.ui.view">
+        <field name="name">apala.trip.expense.form</field>
+        <field name="model">apala.trip.expense</field>
+        <field name="arch" type="xml">
+            <form string="Trip Expense">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="trip_id"/>
+                            <field name="expense_type"/>
+                            <field name="description"/>
+                            <field name="employee_id"/>
+                        </group>
+                        <group>
+                            <field name="amount" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="date"/>
+                            <field name="receipt_ref"/>
+                            <field name="hr_expense_id"/>
+                            <field name="state"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Trip Expense List View -->
+    <record id="trip_expense_list_view" model="ir.ui.view">
+        <field name="name">apala.trip.expense.tree</field>
+        <field name="model">apala.trip.expense</field>
+        <field name="arch" type="xml">
+            <tree string="Trip Expenses" decoration-info="state=='draft'"
+                  decoration-success="state=='posted'">
+                <field name="trip_id"/>
+                <field name="expense_type"/>
+                <field name="description"/>
+                <field name="amount" widget="monetary" sum="Total"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="date"/>
+                <field name="employee_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Trip Expense Search View -->
+    <record id="trip_expense_search_view" model="ir.ui.view">
+        <field name="name">apala.trip.expense.search</field>
+        <field name="model">apala.trip.expense</field>
+        <field name="arch" type="xml">
+            <search string="Search Trip Expenses">
+                <field name="trip_id"/>
+                <field name="expense_type"/>
+                <field name="employee_id"/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Posted" name="posted" domain="[('state','=','posted')]"/>
+                <separator/>
+                <filter string="My Expenses" name="my_expenses"
+                        domain="[('employee_id.user_id','=',uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Trip" name="group_trip" context="{'group_by': 'trip_id'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'expense_type'}"/>
+                    <filter string="Employee" name="group_employee" context="{'group_by': 'employee_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Trip Expense Action -->
+    <record id="action_apala_trip_expense" model="ir.actions.act_window">
+        <field name="name">Trip Expenses</field>
+        <field name="res_model">apala.trip.expense</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
+        <field name="search_view_id" ref="trip_expense_search_view"/>
+        <field name="context">{'search_default_my_expenses': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No trip expenses recorded
+            </p>
+        </field>
+    </record>
+
+</odoo>
