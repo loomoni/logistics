@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--  Driver Checklist – Form View                                -->
+    <!-- ============================================================ -->
+    <record id="view_apala_driver_checklist_form" model="ir.ui.view">
+        <field name="name">apala.driver.checklist.form</field>
+        <field name="model">apala.driver.checklist</field>
+        <field name="arch" type="xml">
+            <form string="Driver Checklist">
+                <header>
+                    <button name="action_create_job_card" string="Create Job Card"
+                            type="object" class="btn-danger"
+                            attrs="{'invisible': [('vehicle_fit_for_dispatch','=',True)]}"
+                            confirm="This will create a Job Card for the failed items. Continue?"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-check-circle"
+                                attrs="{'invisible': [('vehicle_fit_for_dispatch','=',False)]}">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text text-success">FIT</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-times-circle"
+                                attrs="{'invisible': [('vehicle_fit_for_dispatch','=',True)]}">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text text-danger">NOT FIT</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="checklist_type"/>
+                            <field name="datetime"/>
+                            <field name="vehicle_id"/>
+                        </group>
+                        <group>
+                            <field name="driver_id"/>
+                            <field name="trip_id"/>
+                            <field name="vehicle_fit_for_dispatch"/>
+                        </group>
+                    </group>
+
+                    <!-- Pre-Trip Checks -->
+                    <group string="Vehicle Checks"
+                           attrs="{'invisible': [('checklist_type','=','post_trip')]}">
+                        <group>
+                            <field name="engine_ok"/>
+                            <field name="brakes_ok"/>
+                            <field name="tyres_ok"/>
+                            <field name="lights_ok"/>
+                            <field name="oil_level_ok"/>
+                        </group>
+                        <group>
+                            <field name="coolant_ok"/>
+                            <field name="documents_ok"/>
+                            <field name="fire_extinguisher"/>
+                            <field name="fuel_level"/>
+                        </group>
+                    </group>
+
+                    <group string="Check Notes"
+                           attrs="{'invisible': [('checklist_type','=','post_trip')]}">
+                        <group>
+                            <field name="engine_note"/>
+                            <field name="brakes_note"/>
+                        </group>
+                        <group>
+                            <field name="tyres_note"/>
+                            <field name="lights_note"/>
+                        </group>
+                    </group>
+
+                    <!-- Post-Trip Checks -->
+                    <group string="Post-Trip Checks"
+                           attrs="{'invisible': [('checklist_type','=','pre_trip')]}">
+                        <group>
+                            <field name="body_damage"/>
+                            <field name="body_damage_desc"
+                                   attrs="{'invisible': [('body_damage','=',False)]}"/>
+                        </group>
+                        <group>
+                            <field name="fuel_level"/>
+                        </group>
+                    </group>
+
+                    <!-- Issues Summary -->
+                    <group string="Issues Summary">
+                        <field name="issues_found" nolabel="1" colspan="2" readonly="1"/>
+                    </group>
+
+                    <group>
+                        <field name="signature"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Driver Checklist – List View                                -->
+    <!-- ============================================================ -->
+    <record id="view_apala_driver_checklist_tree" model="ir.ui.view">
+        <field name="name">apala.driver.checklist.tree</field>
+        <field name="model">apala.driver.checklist</field>
+        <field name="arch" type="xml">
+            <tree string="Driver Checklists"
+                  decoration-danger="vehicle_fit_for_dispatch == False"
+                  decoration-success="vehicle_fit_for_dispatch == True">
+                <field name="datetime"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="checklist_type"/>
+                <field name="vehicle_fit_for_dispatch"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Driver Checklist – Search View                              -->
+    <!-- ============================================================ -->
+    <record id="view_apala_driver_checklist_search" model="ir.ui.view">
+        <field name="name">apala.driver.checklist.search</field>
+        <field name="model">apala.driver.checklist</field>
+        <field name="arch" type="xml">
+            <search string="Search Checklists">
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <separator/>
+                <filter string="Pre-Trip" name="pre_trip" domain="[('checklist_type','=','pre_trip')]"/>
+                <filter string="Post-Trip" name="post_trip" domain="[('checklist_type','=','post_trip')]"/>
+                <separator/>
+                <filter string="Not Fit" name="not_fit" domain="[('vehicle_fit_for_dispatch','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Vehicle" name="group_vehicle" context="{'group_by': 'vehicle_id'}"/>
+                    <filter string="Driver" name="group_driver" context="{'group_by': 'driver_id'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'checklist_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Driver Checklist – Action                                   -->
+    <!-- ============================================================ -->
+    <record id="action_apala_driver_checklist" model="ir.actions.act_window">
+        <field name="name">Driver Checklists</field>
+        <field name="res_model">apala.driver.checklist</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_apala_driver_checklist_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new driver checklist
+            </p>
+            <p>Pre-trip and post-trip vehicle inspection checklists.</p>
+        </field>
+    </record>
+
+</odoo>

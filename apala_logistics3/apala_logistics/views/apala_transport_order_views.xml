@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Transport Order Form View -->
+    <record id="transport_order_form_view" model="ir.ui.view">
+        <field name="name">apala.transport.order.form</field>
+        <field name="model">apala.transport.order</field>
+        <field name="arch" type="xml">
+            <form string="Transport Order">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object"
+                            states="draft" class="oe_highlight"/>
+                    <button name="action_create_trip" string="Create Trip" type="object"
+                            states="confirmed" class="oe_highlight"/>
+                    <button name="action_create_invoice" string="Create Invoice" type="object"
+                            states="delivered" class="oe_highlight"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            states="draft,confirmed" confirm="Are you sure you want to cancel?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,in_transit,delivered,invoiced"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoices" type="object"
+                                class="oe_stat_button" icon="fa-pencil-square-o">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="customer_id"/>
+                            <field name="origin"/>
+                            <field name="sale_order_id"/>
+                            <field name="route_id"/>
+                            <field name="cargo_type"/>
+                        </group>
+                        <group>
+                            <field name="vehicle_id"/>
+                            <field name="driver_id"/>
+                            <field name="requested_date"/>
+                            <field name="agreed_date"/>
+                            <field name="freight_charge" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="consignment_note_no"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="pickup_location"/>
+                            <field name="delivery_location"/>
+                        </group>
+                        <group>
+                            <field name="weight_kg"/>
+                            <field name="volume_m3"/>
+                            <field name="pieces"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Cargo Manifests">
+                            <field name="manifest_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="shipper_id"/>
+                                    <field name="consignee_id"/>
+                                    <field name="total_weight_kg"/>
+                                    <field name="total_pieces"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Trips">
+                            <field name="trip_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="vehicle_id"/>
+                                    <field name="driver_id"/>
+                                    <field name="departure_date"/>
+                                    <field name="arrival_date"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes" placeholder="Internal notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Transport Order List View -->
+    <record id="transport_order_list_view" model="ir.ui.view">
+        <field name="name">apala.transport.order.tree</field>
+        <field name="model">apala.transport.order</field>
+        <field name="arch" type="xml">
+            <tree string="Transport Orders" decoration-info="state=='draft'"
+                  decoration-success="state=='delivered'" decoration-muted="state=='cancelled'"
+                  decoration-warning="state=='in_transit'">
+                <field name="name"/>
+                <field name="customer_id"/>
+                <field name="route_id"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="cargo_type"/>
+                <field name="freight_charge" widget="monetary"/>
+                <field name="requested_date"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Transport Order Kanban View -->
+    <record id="transport_order_kanban_view" model="ir.ui.view">
+        <field name="name">apala.transport.order.kanban</field>
+        <field name="model">apala.transport.order</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="customer_id"/>
+                <field name="route_id"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="freight_charge"/>
+                <field name="state"/>
+                <field name="cargo_type"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong><field name="name"/></strong>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <field name="customer_id"/><br/>
+                                <field name="route_id"/><br/>
+                                <span><field name="vehicle_id"/> / <field name="driver_id"/></span>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <field name="freight_charge" widget="monetary"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Transport Order Search View -->
+    <record id="transport_order_search_view" model="ir.ui.view">
+        <field name="name">apala.transport.order.search</field>
+        <field name="model">apala.transport.order</field>
+        <field name="arch" type="xml">
+            <search string="Search Transport Orders">
+                <field name="name"/>
+                <field name="customer_id"/>
+                <field name="route_id"/>
+                <field name="driver_id"/>
+                <field name="vehicle_id"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Confirmed" name="confirmed" domain="[('state','=','confirmed')]"/>
+                <filter string="In Transit" name="in_transit" domain="[('state','=','in_transit')]"/>
+                <filter string="Delivered" name="delivered" domain="[('state','=','delivered')]"/>
+                <filter string="Invoiced" name="invoiced" domain="[('state','=','invoiced')]"/>
+                <filter string="Cancelled" name="cancelled" domain="[('state','=','cancelled')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Customer" name="group_customer" context="{'group_by': 'customer_id'}"/>
+                    <filter string="Route" name="group_route" context="{'group_by': 'route_id'}"/>
+                    <filter string="Driver" name="group_driver" context="{'group_by': 'driver_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Requested Month" name="group_month" context="{'group_by': 'requested_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Transport Order Action -->
+    <record id="action_apala_transport_order" model="ir.actions.act_window">
+        <field name="name">Transport Orders</field>
+        <field name="res_model">apala.transport.order</field>
+        <field name="view_mode">tree,kanban,form,graph,pivot</field>
+        <field name="search_view_id" ref="transport_order_search_view"/>
+        <field name="context">{'search_default_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first transport order
+            </p>
+        </field>
+    </record>
+
+</odoo>

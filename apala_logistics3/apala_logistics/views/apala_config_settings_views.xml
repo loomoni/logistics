@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_apala" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.apala</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Apala Logistics"
+                     string="Apala Logistics" data-key="apala_logistics">
+                    <h2>Operational Defaults</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="apala_default_route_id"/>
+                                <div class="text-muted">Default route for new transport orders</div>
+                                <field name="apala_default_route_id"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="apala_auto_send_confirmation"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="apala_auto_send_confirmation"/>
+                                <div class="text-muted">
+                                    Automatically send confirmation email when order is confirmed
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2>Alert Thresholds</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="apala_licence_alert_days"/>
+                                <div class="text-muted">Days before licence expiry to trigger alert</div>
+                                <field name="apala_licence_alert_days"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="apala_trip_overdue_hours"/>
+                                <div class="text-muted">Hours past ETA before trip is flagged overdue</div>
+                                <field name="apala_trip_overdue_hours"/>
+                            </div>
+                        </div>
+                    </div>
+                    <h2>Tanzania Compliance</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="apala_company_tin"/>
+                                <div class="text-muted">TRA Tax Identification Number</div>
+                                <field name="apala_company_tin"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="apala_company_vrn"/>
+                                <div class="text-muted">VAT Registration Number</div>
+                                <field name="apala_company_vrn"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

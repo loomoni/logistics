@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--  DVSR – Form View                                            -->
+    <!-- ============================================================ -->
+    <record id="view_apala_daily_vehicle_status_form" model="ir.ui.view">
+        <field name="name">apala.daily.vehicle.status.form</field>
+        <field name="model">apala.daily.vehicle.status</field>
+        <field name="arch" type="xml">
+            <form string="Daily Vehicle Status Report">
+                <header>
+                    <button name="action_submit" string="Submit"
+                            type="object" states="draft" class="oe_highlight"/>
+                    <button name="action_approve" string="Approve"
+                            type="object" states="submitted" class="oe_highlight"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="report_date"/>
+                            <field name="prepared_by"/>
+                        </group>
+                        <group>
+                            <field name="approved_by"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+
+                    <!-- Fleet Summary Statistics -->
+                    <group string="Fleet Summary">
+                        <group>
+                            <field name="total_fleet_size"/>
+                            <field name="vehicles_ready"/>
+                        </group>
+                        <group>
+                            <field name="vehicles_minor_pm"/>
+                            <field name="vehicles_major"/>
+                        </group>
+                        <group>
+                            <field name="vehicles_awaiting"/>
+                            <field name="vehicles_operational"/>
+                        </group>
+                    </group>
+
+                    <!-- Vehicle Line Items -->
+                    <group string="Vehicle Status Details">
+                        <field name="line_ids" nolabel="1" colspan="2">
+                            <tree editable="bottom">
+                                <field name="vehicle_id"/>
+                                <field name="status"/>
+                                <field name="reason_for_stay"/>
+                                <field name="days_in_garage"/>
+                                <field name="etc"/>
+                                <field name="bottleneck"/>
+                                <field name="job_card_id"/>
+                                <field name="impact_level"/>
+                            </tree>
+                        </field>
+                    </group>
+
+                    <!-- Critical Blockers -->
+                    <group string="Critical Blockers">
+                        <field name="critical_blockers" nolabel="1" colspan="2"
+                               placeholder="Describe any critical blockers preventing vehicle readiness..."/>
+                    </group>
+
+                    <!-- Related Job Cards -->
+                    <group string="Related Job Cards">
+                        <field name="job_card_ids" nolabel="1" colspan="2"
+                               widget="many2many_tags"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  DVSR – List View                                            -->
+    <!-- ============================================================ -->
+    <record id="view_apala_daily_vehicle_status_tree" model="ir.ui.view">
+        <field name="name">apala.daily.vehicle.status.tree</field>
+        <field name="model">apala.daily.vehicle.status</field>
+        <field name="arch" type="xml">
+            <tree string="Daily Vehicle Status Reports"
+                  decoration-info="state=='draft'"
+                  decoration-success="state=='approved'">
+                <field name="name"/>
+                <field name="report_date"/>
+                <field name="prepared_by"/>
+                <field name="state"/>
+                <field name="vehicles_ready"/>
+                <field name="vehicles_major"/>
+                <field name="vehicles_awaiting"/>
+                <field name="total_fleet_size"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  DVSR – Search View                                          -->
+    <!-- ============================================================ -->
+    <record id="view_apala_daily_vehicle_status_search" model="ir.ui.view">
+        <field name="name">apala.daily.vehicle.status.search</field>
+        <field name="model">apala.daily.vehicle.status</field>
+        <field name="arch" type="xml">
+            <search string="Search DVSR">
+                <field name="name"/>
+                <field name="prepared_by"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]"/>
+                <filter string="Approved" name="approved" domain="[('state','=','approved')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Date" name="group_date" context="{'group_by': 'report_date'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Prepared By" name="group_preparer" context="{'group_by': 'prepared_by'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  DVSR – Action                                               -->
+    <!-- ============================================================ -->
+    <record id="action_apala_daily_vehicle_status" model="ir.actions.act_window">
+        <field name="name">Daily Vehicle Status Reports</field>
+        <field name="res_model">apala.daily.vehicle.status</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_apala_daily_vehicle_status_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new Daily Vehicle Status Report
+            </p>
+            <p>Track the daily readiness of your fleet.</p>
+        </field>
+    </record>
+
+</odoo>

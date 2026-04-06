@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--  Spare Part – Form View                                      -->
+    <!-- ============================================================ -->
+    <record id="view_apala_spare_part_form" model="ir.ui.view">
+        <field name="name">apala.spare.part.form</field>
+        <field name="model">apala.spare.part</field>
+        <field name="arch" type="xml">
+            <form string="Spare Part">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Part Name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identification">
+                            <field name="part_code"/>
+                            <field name="part_type"/>
+                            <field name="uom"/>
+                            <field name="vehicle_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="Stock Levels">
+                            <field name="qty_on_hand"/>
+                            <field name="qty_minimum"/>
+                            <field name="qty_on_order"/>
+                            <field name="unit_cost"/>
+                            <field name="total_value"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Supplier &amp; Location">
+                            <field name="supplier_id"/>
+                            <field name="location"/>
+                            <field name="last_restocked"/>
+                        </group>
+                        <group string="Other">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1" colspan="2"
+                               placeholder="Additional notes..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Spare Part – List View                                      -->
+    <!-- ============================================================ -->
+    <record id="view_apala_spare_part_tree" model="ir.ui.view">
+        <field name="name">apala.spare.part.tree</field>
+        <field name="model">apala.spare.part</field>
+        <field name="arch" type="xml">
+            <tree string="Spare Parts"
+                  decoration-danger="qty_on_hand &lt; qty_minimum">
+                <field name="name"/>
+                <field name="part_code"/>
+                <field name="part_type"/>
+                <field name="qty_on_hand"/>
+                <field name="qty_minimum"/>
+                <field name="qty_on_order"/>
+                <field name="unit_cost"/>
+                <field name="total_value" sum="Total Value"/>
+                <field name="supplier_id" optional="show"/>
+                <field name="location" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Spare Part – Graph View (Bar: qty_on_hand per part_type)    -->
+    <!-- ============================================================ -->
+    <record id="view_apala_spare_part_graph" model="ir.ui.view">
+        <field name="name">apala.spare.part.graph</field>
+        <field name="model">apala.spare.part</field>
+        <field name="arch" type="xml">
+            <graph string="Spare Parts by Type" type="bar">
+                <field name="part_type"/>
+                <field name="qty_on_hand" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Spare Part – Search View                                    -->
+    <!-- ============================================================ -->
+    <record id="view_apala_spare_part_search" model="ir.ui.view">
+        <field name="name">apala.spare.part.search</field>
+        <field name="model">apala.spare.part</field>
+        <field name="arch" type="xml">
+            <search string="Search Spare Parts">
+                <field name="name"/>
+                <field name="part_code"/>
+                <field name="part_type"/>
+                <field name="supplier_id"/>
+                <separator/>
+                <filter string="Low Stock" name="low_stock"
+                        domain="[('qty_on_hand','&lt;','qty_minimum')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Part Type" name="group_type" context="{'group_by': 'part_type'}"/>
+                    <filter string="Supplier" name="group_supplier" context="{'group_by': 'supplier_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Spare Part – Action                                         -->
+    <!-- ============================================================ -->
+    <record id="action_apala_spare_part" model="ir.actions.act_window">
+        <field name="name">Spare Parts Inventory</field>
+        <field name="res_model">apala.spare.part</field>
+        <field name="view_mode">tree,form,graph</field>
+        <field name="search_view_id" ref="view_apala_spare_part_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new spare part to inventory
+            </p>
+            <p>Track spare parts stock levels, costs, and reorder points.</p>
+        </field>
+    </record>
+
+</odoo>

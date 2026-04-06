@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--  Maintenance Schedule – Form View                            -->
+    <!-- ============================================================ -->
+    <record id="view_apala_maintenance_schedule_form" model="ir.ui.view">
+        <field name="name">apala.maintenance.schedule.form</field>
+        <field name="model">apala.maintenance.schedule</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance Schedule">
+                <header>
+                    <button name="action_create_job_card" string="Create Job Card"
+                            type="object" class="oe_highlight"
+                            attrs="{'invisible': [('state', 'in', ['done', 'in_progress'])]}"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="scheduled,overdue,in_progress,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Routine Service - 10,000 km"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="Vehicle &amp; Type">
+                            <field name="vehicle_id"/>
+                            <field name="maintenance_type"/>
+                            <field name="responsible_id"/>
+                        </group>
+                        <group string="Intervals">
+                            <field name="interval_km"/>
+                            <field name="interval_days"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Last Service">
+                            <field name="last_service_km"/>
+                            <field name="last_service_date"/>
+                        </group>
+                        <group string="Next Service">
+                            <field name="next_service_km"/>
+                            <field name="next_service_date"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Remaining">
+                            <field name="km_remaining"/>
+                            <field name="days_remaining"/>
+                        </group>
+                        <group string="Related">
+                            <field name="job_card_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+
+                    <group string="Notes">
+                        <field name="notes" nolabel="1" colspan="2"
+                               placeholder="Additional notes..."/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Maintenance Schedule – List View                            -->
+    <!-- ============================================================ -->
+    <record id="view_apala_maintenance_schedule_tree" model="ir.ui.view">
+        <field name="name">apala.maintenance.schedule.tree</field>
+        <field name="model">apala.maintenance.schedule</field>
+        <field name="arch" type="xml">
+            <tree string="Maintenance Schedules"
+                  decoration-danger="state=='overdue'"
+                  decoration-warning="km_remaining &lt; 500 or days_remaining &lt; 7"
+                  decoration-success="state=='done'">
+                <field name="name"/>
+                <field name="vehicle_id"/>
+                <field name="maintenance_type"/>
+                <field name="next_service_date"/>
+                <field name="next_service_km"/>
+                <field name="km_remaining"/>
+                <field name="days_remaining"/>
+                <field name="state"/>
+                <field name="responsible_id" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Maintenance Schedule – Calendar View                        -->
+    <!-- ============================================================ -->
+    <record id="view_apala_maintenance_schedule_calendar" model="ir.ui.view">
+        <field name="name">apala.maintenance.schedule.calendar</field>
+        <field name="model">apala.maintenance.schedule</field>
+        <field name="arch" type="xml">
+            <calendar string="Maintenance Calendar"
+                      date_start="next_service_date"
+                      color="vehicle_id"
+                      mode="month">
+                <field name="name"/>
+                <field name="vehicle_id"/>
+                <field name="maintenance_type"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Maintenance Schedule – Search View                          -->
+    <!-- ============================================================ -->
+    <record id="view_apala_maintenance_schedule_search" model="ir.ui.view">
+        <field name="name">apala.maintenance.schedule.search</field>
+        <field name="model">apala.maintenance.schedule</field>
+        <field name="arch" type="xml">
+            <search string="Search Maintenance Schedules">
+                <field name="name"/>
+                <field name="vehicle_id"/>
+                <field name="maintenance_type"/>
+                <separator/>
+                <filter string="Scheduled" name="scheduled" domain="[('state','=','scheduled')]"/>
+                <filter string="Overdue" name="overdue" domain="[('state','=','overdue')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('state','=','in_progress')]"/>
+                <filter string="Done" name="done" domain="[('state','=','done')]"/>
+                <separator/>
+                <filter string="Due Soon (7 days)" name="due_soon"
+                        domain="[('days_remaining','&lt;=',7),('state','=','scheduled')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Vehicle" name="group_vehicle" context="{'group_by': 'vehicle_id'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'maintenance_type'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Maintenance Schedule – Action                               -->
+    <!-- ============================================================ -->
+    <record id="action_apala_maintenance_schedule" model="ir.actions.act_window">
+        <field name="name">Maintenance Schedules</field>
+        <field name="res_model">apala.maintenance.schedule</field>
+        <field name="view_mode">tree,form,calendar</field>
+        <field name="search_view_id" ref="view_apala_maintenance_schedule_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Schedule vehicle maintenance
+            </p>
+            <p>Set up km-based and time-based service intervals for your fleet.</p>
+        </field>
+    </record>
+
+</odoo>

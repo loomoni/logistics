@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--  Report Action: Job Card                                     -->
+    <!-- ============================================================ -->
+    <record id="action_report_job_card" model="ir.actions.report">
+        <field name="name">Vehicle Job Card</field>
+        <field name="model">apala.vehicle.job.card</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">apala_logistics.report_job_card</field>
+        <field name="report_file">apala_logistics.report_job_card</field>
+        <field name="binding_model_id" ref="model_apala_vehicle_job_card"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  QWeb Template: Job Card Report                              -->
+    <!-- ============================================================ -->
+    <template id="report_job_card">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- Header -->
+                        <div class="text-center" style="margin-bottom: 20px;">
+                            <h2 style="font-weight: bold;">VEHICLE JOB CARD</h2>
+                            <h4>APALA LOGISTIC CO. LTD</h4>
+                            <h5><span t-field="o.name"/></h5>
+                        </div>
+
+                        <!-- Section A: Vehicle Identification -->
+                        <h5 style="background-color: #003366; color: white; padding: 5px 10px;">
+                            A. VEHICLE IDENTIFICATION
+                        </h5>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td><strong>Vehicle:</strong></td>
+                                <td><span t-field="o.vehicle_id"/></td>
+                                <td><strong>Odometer:</strong></td>
+                                <td><span t-field="o.odometer_reading"/> km</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Driver:</strong></td>
+                                <td><span t-field="o.driver_id"/></td>
+                                <td><strong>Driver Contact:</strong></td>
+                                <td><span t-field="o.driver_contact"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Date Opened:</strong></td>
+                                <td><span t-field="o.date_opened"/></td>
+                                <td><strong>Entry Date/Time:</strong></td>
+                                <td><span t-field="o.entry_datetime"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Section B: Problem Reported -->
+                        <h5 style="background-color: #003366; color: white; padding: 5px 10px;">
+                            B. PROBLEM REPORTED
+                        </h5>
+                        <div style="border: 1px solid #ccc; padding: 10px; min-height: 60px; white-space: pre-wrap;">
+                            <span t-field="o.reported_problem"/>
+                        </div>
+
+                        <!-- Section C: Inspection -->
+                        <h5 style="background-color: #003366; color: white; padding: 5px 10px; margin-top: 15px;">
+                            C. INSPECTION
+                        </h5>
+                        <table class="table table-sm table-bordered" style="margin-bottom: 5px;">
+                            <tr>
+                                <td><strong>Mechanic:</strong></td>
+                                <td><span t-field="o.mechanic_id"/></td>
+                                <td><strong>Inspection Date:</strong></td>
+                                <td><span t-field="o.inspection_date"/></td>
+                                <td><strong>Est. Hours:</strong></td>
+                                <td><span t-field="o.estimated_repair_hours"/></td>
+                            </tr>
+                        </table>
+                        <t t-if="o.inspection_line_ids">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr style="background-color: #f0f0f0;">
+                                        <th>#</th>
+                                        <th>Area</th>
+                                        <th>Findings</th>
+                                        <th>Action Needed</th>
+                                        <th>Priority</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="idx" t-value="0"/>
+                                    <t t-foreach="o.inspection_line_ids" t-as="line">
+                                        <t t-set="idx" t-value="idx + 1"/>
+                                        <tr>
+                                            <td><t t-esc="idx"/></td>
+                                            <td><span t-field="line.area"/></td>
+                                            <td><span t-field="line.findings"/></td>
+                                            <td>
+                                                <t t-if="line.action_needed">&#x2714;</t>
+                                                <t t-else="">&#x2718;</t>
+                                            </td>
+                                            <td><span t-field="line.priority"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- Section D: Parts Required -->
+                        <h5 style="background-color: #003366; color: white; padding: 5px 10px; margin-top: 15px;">
+                            D. PARTS REQUIRED
+                        </h5>
+                        <t t-if="o.part_line_ids">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr style="background-color: #f0f0f0;">
+                                        <th>#</th>
+                                        <th>Part Name</th>
+                                        <th>Qty</th>
+                                        <th>Unit</th>
+                                        <th>Unit Cost</th>
+                                        <th>Total Cost</th>
+                                        <th>Source</th>
+                                        <th>Received</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="pidx" t-value="0"/>
+                                    <t t-foreach="o.part_line_ids" t-as="pline">
+                                        <t t-set="pidx" t-value="pidx + 1"/>
+                                        <tr>
+                                            <td><t t-esc="pidx"/></td>
+                                            <td><span t-field="pline.part_name"/></td>
+                                            <td class="text-right"><span t-field="pline.quantity"/></td>
+                                            <td><span t-field="pline.unit"/></td>
+                                            <td class="text-right">
+                                                <span t-field="pline.unit_cost"
+                                                      t-options='{"widget": "float", "precision": 2}'/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="pline.total_cost"
+                                                      t-options='{"widget": "float", "precision": 2}'/>
+                                            </td>
+                                            <td><span t-field="pline.sourced_from"/></td>
+                                            <td class="text-center">
+                                                <t t-if="pline.received">&#x2714;</t>
+                                                <t t-else="">&#x2718;</t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <tfoot>
+                                    <tr style="font-weight: bold;">
+                                        <td colspan="5" class="text-right">TOTAL:</td>
+                                        <td class="text-right">
+                                            <span t-field="o.total_parts_cost"
+                                                  t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </t>
+
+                        <!-- Section E: Approval -->
+                        <h5 style="background-color: #003366; color: white; padding: 5px 10px; margin-top: 15px;">
+                            E. APPROVAL
+                        </h5>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td><strong>Approved By:</strong></td>
+                                <td><span t-field="o.approved_by"/></td>
+                                <td><strong>Date:</strong></td>
+                                <td><span t-field="o.approval_date"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Notes:</strong></td>
+                                <td colspan="3"><span t-field="o.approval_notes"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Section F: Work Progress -->
+                        <h5 style="background-color: #003366; color: white; padding: 5px 10px; margin-top: 15px;">
+                            F. WORK PROGRESS
+                        </h5>
+                        <t t-if="o.progress_line_ids">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr style="background-color: #f0f0f0;">
+                                        <th>Date</th>
+                                        <th>Work Done</th>
+                                        <th>Parts Used</th>
+                                        <th>Mechanic</th>
+                                        <th>Hours</th>
+                                        <th>Status</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.progress_line_ids" t-as="prog">
+                                        <tr>
+                                            <td><span t-field="prog.date"/></td>
+                                            <td><span t-field="prog.work_done"/></td>
+                                            <td><span t-field="prog.parts_used"/></td>
+                                            <td><span t-field="prog.mechanic_id"/></td>
+                                            <td class="text-right"><span t-field="prog.hours_worked"/></td>
+                                            <td><span t-field="prog.vehicle_status"/></td>
+                                            <td><span t-field="prog.remarks"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- Section G: Quality Check -->
+                        <h5 style="background-color: #003366; color: white; padding: 5px 10px; margin-top: 15px;">
+                            G. QUALITY CHECK
+                        </h5>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td style="width: 40%;"><strong>Test Drive Done</strong></td>
+                                <td style="width: 10%; text-align: center;">
+                                    <t t-if="o.test_drive_done">&#x2714;</t>
+                                    <t t-else="">&#x2718;</t>
+                                </td>
+                                <td style="width: 40%;"><strong>Fault Resolved</strong></td>
+                                <td style="width: 10%; text-align: center;">
+                                    <t t-if="o.fault_resolved">&#x2714;</t>
+                                    <t t-else="">&#x2718;</t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>No Leak Observed</strong></td>
+                                <td style="text-align: center;">
+                                    <t t-if="o.no_leak_observed">&#x2714;</t>
+                                    <t t-else="">&#x2718;</t>
+                                </td>
+                                <td><strong>Vehicle Cleaned</strong></td>
+                                <td style="text-align: center;">
+                                    <t t-if="o.vehicle_cleaned">&#x2714;</t>
+                                    <t t-else="">&#x2718;</t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Quality Checked By:</strong></td>
+                                <td colspan="3"><span t-field="o.quality_checked_by"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Quality Check Date:</strong></td>
+                                <td><span t-field="o.quality_check_date"/></td>
+                                <td><strong>Completion Notes:</strong></td>
+                                <td><span t-field="o.completion_notes"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Section H: Dispatch -->
+                        <h5 style="background-color: #003366; color: white; padding: 5px 10px; margin-top: 15px;">
+                            H. DISPATCH
+                        </h5>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td><strong>Dispatch Date/Time:</strong></td>
+                                <td><span t-field="o.dispatch_datetime"/></td>
+                                <td><strong>Released By:</strong></td>
+                                <td><span t-field="o.released_by"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dispatch Status:</strong></td>
+                                <td><span t-field="o.dispatch_status"/></td>
+                                <td><strong>Remarks:</strong></td>
+                                <td><span t-field="o.dispatch_remarks"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Footer Warning -->
+                        <div style="margin-top: 30px; padding: 10px; border: 2px solid red; text-align: center;">
+                            <strong style="color: red; font-size: 11px;">
+                                NO VEHICLE SHALL BE REPAIRED, TESTED, OR DISPATCHED WITHOUT A FULLY
+                                COMPLETED AND APPROVED JOB CARD.
+                            </strong>
+                        </div>
+
+                        <!-- Days in Garage -->
+                        <div style="margin-top: 15px; text-align: right;">
+                            <strong>Days in Garage: </strong>
+                            <span t-field="o.days_in_garage"/>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

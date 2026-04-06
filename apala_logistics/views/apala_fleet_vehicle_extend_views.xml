@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--  Fleet Vehicle – Inherit Form View (add Apala fields)        -->
+    <!-- ============================================================ -->
+    <record id="view_fleet_vehicle_form_inherit_apala" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.inherit.apala</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Add smart buttons -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" icon="fa-wrench"
+                        type="object" name="action_view_job_cards">
+                    <field name="job_card_count" widget="statinfo" string="Job Cards"/>
+                </button>
+                <button class="oe_stat_button" icon="fa-calendar-check-o"
+                        type="object" name="action_view_maintenance_schedules">
+                    <field name="maintenance_schedule_count" widget="statinfo" string="Maintenance"/>
+                </button>
+                <button class="oe_stat_button" icon="fa-tint"
+                        type="object" name="action_view_fuel_logs">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Fuel Logs</span>
+                    </div>
+                </button>
+            </xpath>
+
+            <!-- Add new notebook tab for Apala Maintenance -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Apala Maintenance" name="apala_maintenance">
+                    <group>
+                        <group string="Vehicle Status">
+                            <field name="is_apala_vehicle"/>
+                            <field name="vehicle_class"/>
+                            <field name="current_status"/>
+                            <field name="base_location"/>
+                        </group>
+                        <group string="Payload">
+                            <field name="max_payload_kg"/>
+                            <field name="max_volume_m3"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Next Service">
+                            <field name="next_service_km"/>
+                            <field name="next_service_date"/>
+                        </group>
+                        <group string="Fuel Stats">
+                            <field name="avg_fuel_efficiency"/>
+                            <field name="total_fuel_cost_month"/>
+                        </group>
+                    </group>
+                    <group string="Maintenance Schedules">
+                        <field name="maintenance_schedule_ids" nolabel="1" colspan="2">
+                            <tree>
+                                <field name="name"/>
+                                <field name="maintenance_type"/>
+                                <field name="next_service_date"/>
+                                <field name="next_service_km"/>
+                                <field name="km_remaining"/>
+                                <field name="days_remaining"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

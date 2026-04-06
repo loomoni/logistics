@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Freight Order Form View -->
+    <record id="freight_order_form_view" model="ir.ui.view">
+        <field name="name">apala.freight.order.form</field>
+        <field name="model">apala.freight.order</field>
+        <field name="arch" type="xml">
+            <form string="Freight Order">
+                <header>
+                    <button name="action_confirm_booking" string="Confirm Booking" type="object"
+                            states="draft" class="oe_highlight"/>
+                    <button name="action_in_transit" string="In Transit" type="object"
+                            states="booking" class="oe_highlight"/>
+                    <button name="action_customs" string="Customs" type="object"
+                            states="in_transit"/>
+                    <button name="action_cleared" string="Cleared" type="object"
+                            states="customs" class="oe_highlight"/>
+                    <button name="action_delivered" string="Delivered" type="object"
+                            states="cleared" class="oe_highlight"/>
+                    <button name="action_create_invoice" string="Create Invoice" type="object"
+                            states="delivered" class="oe_highlight"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,booking,in_transit,customs,cleared,delivered,invoiced"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="customer_id"/>
+                            <field name="freight_type"/>
+                            <field name="mode"/>
+                            <field name="incoterm_id"/>
+                        </group>
+                        <group>
+                            <field name="bl_number"/>
+                            <field name="booking_ref"/>
+                            <field name="etd"/>
+                            <field name="eta"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Origin">
+                            <field name="origin_country"/>
+                            <field name="origin_port"/>
+                        </group>
+                        <group string="Destination">
+                            <field name="destination_country"/>
+                            <field name="destination_port"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="commodity"/>
+                            <field name="hs_code"/>
+                            <field name="gross_weight_kg"/>
+                            <field name="volume_m3"/>
+                        </group>
+                        <group>
+                            <field name="freight_cost" widget="monetary"/>
+                            <field name="customs_duty" widget="monetary"/>
+                            <field name="other_charges" widget="monetary"/>
+                            <field name="total_cost" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="transport_order_id"/>
+                        <field name="invoice_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Customs Documents">
+                            <field name="customs_doc_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="doc_type"/>
+                                    <field name="document_number"/>
+                                    <field name="issue_date"/>
+                                    <field name="status"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes" placeholder="Notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Freight Order List View -->
+    <record id="freight_order_list_view" model="ir.ui.view">
+        <field name="name">apala.freight.order.tree</field>
+        <field name="model">apala.freight.order</field>
+        <field name="arch" type="xml">
+            <tree string="Freight Orders" decoration-info="state=='draft'"
+                  decoration-warning="state=='customs'"
+                  decoration-success="state in ('delivered','invoiced')">
+                <field name="name"/>
+                <field name="customer_id"/>
+                <field name="freight_type"/>
+                <field name="mode"/>
+                <field name="commodity"/>
+                <field name="bl_number"/>
+                <field name="eta"/>
+                <field name="total_cost" widget="monetary"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Freight Order Search View -->
+    <record id="freight_order_search_view" model="ir.ui.view">
+        <field name="name">apala.freight.order.search</field>
+        <field name="model">apala.freight.order</field>
+        <field name="arch" type="xml">
+            <search string="Search Freight Orders">
+                <field name="name"/>
+                <field name="customer_id"/>
+                <field name="bl_number"/>
+                <field name="commodity"/>
+                <filter string="Import" name="import" domain="[('freight_type','=','import')]"/>
+                <filter string="Export" name="export" domain="[('freight_type','=','export')]"/>
+                <filter string="At Customs" name="customs" domain="[('state','=','customs')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Customer" name="group_customer" context="{'group_by': 'customer_id'}"/>
+                    <filter string="Freight Type" name="group_type" context="{'group_by': 'freight_type'}"/>
+                    <filter string="Mode" name="group_mode" context="{'group_by': 'mode'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Freight Order Action -->
+    <record id="action_apala_freight_order" model="ir.actions.act_window">
+        <field name="name">Freight Orders</field>
+        <field name="res_model">apala.freight.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="freight_order_search_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first freight order
+            </p>
+        </field>
+    </record>
+
+</odoo>

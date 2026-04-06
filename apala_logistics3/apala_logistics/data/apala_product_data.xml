@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="product_freight_transport_service" model="product.product">
+            <field name="name">Freight Transport Service</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="False"/>
+            <field name="list_price">0.0</field>
+            <field name="taxes_id" eval="[(6, 0, [ref('apala_logistics.tax_vat_18_sale')])]"/>
+        </record>
+
+        <record id="product_cargo_storage_service" model="product.product">
+            <field name="name">Cargo Storage Service</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="False"/>
+            <field name="list_price">0.0</field>
+            <field name="taxes_id" eval="[(6, 0, [ref('apala_logistics.tax_vat_18_sale')])]"/>
+        </record>
+
+        <record id="product_freight_forwarding_service" model="product.product">
+            <field name="name">Freight Forwarding Service</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="False"/>
+            <field name="list_price">0.0</field>
+            <field name="taxes_id" eval="[(6, 0, [ref('apala_logistics.tax_vat_18_sale')])]"/>
+        </record>
+
+        <record id="product_customs_clearance_service" model="product.product">
+            <field name="name">Customs Clearance Service</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="False"/>
+            <field name="list_price">0.0</field>
+            <field name="taxes_id" eval="[(6, 0, [ref('apala_logistics.tax_vat_18_sale')])]"/>
+        </record>
+
+    </data>
+</odoo>

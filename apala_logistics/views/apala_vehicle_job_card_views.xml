@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--  Job Card – Form View                                        -->
+    <!-- ============================================================ -->
+    <record id="view_apala_vehicle_job_card_form" model="ir.ui.view">
+        <field name="name">apala.vehicle.job.card.form</field>
+        <field name="model">apala.vehicle.job.card</field>
+        <field name="arch" type="xml">
+            <form string="Vehicle Job Card">
+                <header>
+                    <button name="action_start" string="Start Work"
+                            type="object" states="draft" class="oe_highlight"/>
+                    <button name="action_quality" string="Quality Check"
+                            type="object" states="in_progress" class="oe_highlight"/>
+                    <button name="action_complete" string="Complete"
+                            type="object" states="quality_check" class="oe_highlight"/>
+                    <button name="action_dispatch" string="Dispatch"
+                            type="object" states="completed" class="oe_highlight"/>
+                    <button name="action_cancel" string="Cancel"
+                            type="object" states="draft,in_progress,quality_check,completed"
+                            confirm="Are you sure you want to cancel this job card?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,in_progress,quality_check,completed,dispatched"/>
+                </header>
+                <sheet>
+                    <!-- Smart Buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-truck"
+                                name="%(fleet.fleet_vehicle_action)d" type="action"
+                                attrs="{'invisible': [('vehicle_id', '=', False)]}">
+                            <field name="vehicle_id" widget="statinfo" string="Vehicle"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-calendar"
+                                type="object" name="action_start">
+                            <field name="days_in_garage" widget="statinfo" string="Days in Garage"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-money"
+                                type="object" name="action_start">
+                            <field name="total_parts_cost" widget="statinfo" string="Parts Cost"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+
+                    <!-- Section A: Vehicle Identification -->
+                    <group string="A. Vehicle Identification">
+                        <group>
+                            <field name="vehicle_id"/>
+                            <field name="odometer_reading"/>
+                            <field name="driver_id"/>
+                        </group>
+                        <group>
+                            <field name="driver_contact"/>
+                            <field name="date_opened"/>
+                            <field name="entry_datetime"/>
+                        </group>
+                    </group>
+
+                    <!-- Section B: Problem Reported -->
+                    <group string="B. Problem Reported">
+                        <field name="reported_problem" nolabel="1" colspan="2"
+                               placeholder="Describe the reported problem..."/>
+                    </group>
+
+                    <!-- Section C: Inspection -->
+                    <group string="C. Inspection">
+                        <group>
+                            <field name="mechanic_id"/>
+                            <field name="inspection_date"/>
+                        </group>
+                        <group>
+                            <field name="estimated_repair_hours"/>
+                        </group>
+                        <field name="inspection_line_ids" nolabel="1" colspan="2">
+                            <tree editable="bottom">
+                                <field name="area"/>
+                                <field name="findings"/>
+                                <field name="action_needed"/>
+                                <field name="priority"/>
+                            </tree>
+                        </field>
+                    </group>
+
+                    <!-- Section D: Parts Required -->
+                    <group string="D. Parts Required">
+                        <field name="part_line_ids" nolabel="1" colspan="2">
+                            <tree editable="bottom">
+                                <field name="product_id" optional="show"/>
+                                <field name="part_name"/>
+                                <field name="quantity"/>
+                                <field name="unit"/>
+                                <field name="unit_cost"/>
+                                <field name="total_cost" sum="Total"/>
+                                <field name="sourced_from"/>
+                                <field name="received"/>
+                            </tree>
+                        </field>
+                        <group>
+                            <field name="total_parts_cost"/>
+                        </group>
+                    </group>
+
+                    <!-- Section E: Approval -->
+                    <group string="E. Approval">
+                        <group>
+                            <field name="approved_by"/>
+                            <field name="approval_date"/>
+                        </group>
+                        <group>
+                            <field name="approval_notes"/>
+                        </group>
+                    </group>
+
+                    <!-- Section F: Work Progress -->
+                    <group string="F. Work Progress">
+                        <field name="progress_line_ids" nolabel="1" colspan="2">
+                            <tree editable="bottom">
+                                <field name="date"/>
+                                <field name="work_done"/>
+                                <field name="parts_used"/>
+                                <field name="mechanic_id"/>
+                                <field name="hours_worked"/>
+                                <field name="vehicle_status"/>
+                                <field name="remarks"/>
+                            </tree>
+                        </field>
+                    </group>
+
+                    <!-- Section G: Quality Check -->
+                    <group string="G. Quality Check"
+                           attrs="{'invisible': [('state', 'not in', ['quality_check', 'completed', 'dispatched'])]}">
+                        <group>
+                            <field name="test_drive_done"/>
+                            <field name="fault_resolved"/>
+                            <field name="no_leak_observed"/>
+                            <field name="vehicle_cleaned"/>
+                        </group>
+                        <group>
+                            <field name="quality_checked_by"/>
+                            <field name="quality_check_date"/>
+                            <field name="completion_notes"/>
+                        </group>
+                    </group>
+
+                    <!-- Section H: Dispatch -->
+                    <group string="H. Dispatch"
+                           attrs="{'invisible': [('state', 'not in', ['completed', 'dispatched'])]}">
+                        <group>
+                            <field name="dispatch_datetime"/>
+                            <field name="released_by"/>
+                        </group>
+                        <group>
+                            <field name="dispatch_status"/>
+                            <field name="dispatch_remarks"/>
+                        </group>
+                    </group>
+
+                    <!-- Related Records -->
+                    <group string="Related Records">
+                        <group>
+                            <field name="dvsr_id"/>
+                            <field name="transport_order_id"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Job Card – List View                                        -->
+    <!-- ============================================================ -->
+    <record id="view_apala_vehicle_job_card_tree" model="ir.ui.view">
+        <field name="name">apala.vehicle.job.card.tree</field>
+        <field name="model">apala.vehicle.job.card</field>
+        <field name="arch" type="xml">
+            <tree string="Vehicle Job Cards"
+                  decoration-info="state=='draft'"
+                  decoration-warning="state=='in_progress'"
+                  decoration-success="state=='dispatched'"
+                  decoration-danger="state=='cancelled'">
+                <field name="name"/>
+                <field name="vehicle_id"/>
+                <field name="state"/>
+                <field name="days_in_garage"/>
+                <field name="mechanic_id"/>
+                <field name="date_opened"/>
+                <field name="total_parts_cost" sum="Total"/>
+                <field name="dispatch_status"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Job Card – Kanban View                                      -->
+    <!-- ============================================================ -->
+    <record id="view_apala_vehicle_job_card_kanban" model="ir.ui.view">
+        <field name="name">apala.vehicle.job.card.kanban</field>
+        <field name="model">apala.vehicle.job.card</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="vehicle_id"/>
+                <field name="mechanic_id"/>
+                <field name="days_in_garage"/>
+                <field name="state"/>
+                <field name="total_parts_cost"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong><field name="name"/></strong>
+                                <div><field name="vehicle_id"/></div>
+                                <div>
+                                    <span class="badge badge-pill badge-info">
+                                        <field name="days_in_garage"/> days
+                                    </span>
+                                </div>
+                                <div t-if="record.mechanic_id.value">
+                                    <i class="fa fa-wrench"/> <field name="mechanic_id"/>
+                                </div>
+                                <div>
+                                    <field name="total_parts_cost" widget="monetary"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Job Card – Search View                                      -->
+    <!-- ============================================================ -->
+    <record id="view_apala_vehicle_job_card_search" model="ir.ui.view">
+        <field name="name">apala.vehicle.job.card.search</field>
+        <field name="model">apala.vehicle.job.card</field>
+        <field name="arch" type="xml">
+            <search string="Search Job Cards">
+                <field name="name"/>
+                <field name="vehicle_id"/>
+                <field name="mechanic_id"/>
+                <field name="driver_id"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('state','=','in_progress')]"/>
+                <filter string="Quality Check" name="quality_check" domain="[('state','=','quality_check')]"/>
+                <filter string="Completed" name="completed" domain="[('state','=','completed')]"/>
+                <filter string="Dispatched" name="dispatched" domain="[('state','=','dispatched')]"/>
+                <filter string="Cancelled" name="cancelled" domain="[('state','=','cancelled')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Vehicle" name="group_vehicle" context="{'group_by': 'vehicle_id'}"/>
+                    <filter string="Mechanic" name="group_mechanic" context="{'group_by': 'mechanic_id'}"/>
+                    <filter string="Date Opened" name="group_date" context="{'group_by': 'date_opened:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Job Card – Action                                           -->
+    <!-- ============================================================ -->
+    <record id="action_apala_vehicle_job_card" model="ir.actions.act_window">
+        <field name="name">Vehicle Job Cards</field>
+        <field name="res_model">apala.vehicle.job.card</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="search_view_id" ref="view_apala_vehicle_job_card_search"/>
+        <field name="context">{'search_default_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new Vehicle Job Card
+            </p>
+            <p>Track vehicle repairs from entry to dispatch.</p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--  Fuel Log – Form View                                        -->
+    <!-- ============================================================ -->
+    <record id="view_apala_fuel_log_form" model="ir.ui.view">
+        <field name="name">apala.fuel.log.form</field>
+        <field name="model">apala.fuel.log</field>
+        <field name="arch" type="xml">
+            <form string="Fuel Log">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Vehicle &amp; Driver">
+                            <field name="vehicle_id"/>
+                            <field name="driver_id"/>
+                            <field name="trip_id"/>
+                        </group>
+                        <group string="Fuel Details">
+                            <field name="date"/>
+                            <field name="odometer"/>
+                            <field name="litres"/>
+                            <field name="cost_per_litre"/>
+                            <field name="total_cost"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Station &amp; Receipt">
+                            <field name="fuel_station"/>
+                            <field name="receipt_ref"/>
+                            <field name="fuel_card_used"/>
+                        </group>
+                        <group string="Other">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1" colspan="2"
+                               placeholder="Additional notes..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Fuel Log – List View                                        -->
+    <!-- ============================================================ -->
+    <record id="view_apala_fuel_log_tree" model="ir.ui.view">
+        <field name="name">apala.fuel.log.tree</field>
+        <field name="model">apala.fuel.log</field>
+        <field name="arch" type="xml">
+            <tree string="Fuel Logs">
+                <field name="date"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="litres" sum="Total Litres"/>
+                <field name="total_cost" sum="Total Cost"/>
+                <field name="trip_id"/>
+                <field name="fuel_station" optional="show"/>
+                <field name="odometer" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Fuel Log – Graph View (Bar: fuel cost per vehicle per month) -->
+    <!-- ============================================================ -->
+    <record id="view_apala_fuel_log_graph" model="ir.ui.view">
+        <field name="name">apala.fuel.log.graph</field>
+        <field name="model">apala.fuel.log</field>
+        <field name="arch" type="xml">
+            <graph string="Fuel Cost Analysis" type="bar">
+                <field name="vehicle_id"/>
+                <field name="date" interval="month"/>
+                <field name="total_cost" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Fuel Log – Pivot View                                       -->
+    <!-- ============================================================ -->
+    <record id="view_apala_fuel_log_pivot" model="ir.ui.view">
+        <field name="name">apala.fuel.log.pivot</field>
+        <field name="model">apala.fuel.log</field>
+        <field name="arch" type="xml">
+            <pivot string="Fuel Analysis">
+                <field name="vehicle_id" type="row"/>
+                <field name="date" interval="month" type="col"/>
+                <field name="litres" type="measure"/>
+                <field name="total_cost" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Fuel Log – Search View                                      -->
+    <!-- ============================================================ -->
+    <record id="view_apala_fuel_log_search" model="ir.ui.view">
+        <field name="name">apala.fuel.log.search</field>
+        <field name="model">apala.fuel.log</field>
+        <field name="arch" type="xml">
+            <search string="Search Fuel Logs">
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="trip_id"/>
+                <field name="fuel_station"/>
+                <separator/>
+                <filter string="This Month" name="this_month"
+                        domain="[('date','&gt;=', (context_today() - relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"/>
+                <filter string="Fuel Card" name="fuel_card" domain="[('fuel_card_used','=',True)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Vehicle" name="group_vehicle" context="{'group_by': 'vehicle_id'}"/>
+                    <filter string="Driver" name="group_driver" context="{'group_by': 'driver_id'}"/>
+                    <filter string="Month" name="group_month" context="{'group_by': 'date:month'}"/>
+                    <filter string="Trip" name="group_trip" context="{'group_by': 'trip_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Fuel Log – Action                                           -->
+    <!-- ============================================================ -->
+    <record id="action_apala_fuel_log" model="ir.actions.act_window">
+        <field name="name">Fuel Logs</field>
+        <field name="res_model">apala.fuel.log</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
+        <field name="search_view_id" ref="view_apala_fuel_log_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Record a new fuel log entry
+            </p>
+            <p>Track fuel consumption and costs across your fleet.</p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--  Report Action: DVSR                                         -->
+    <!-- ============================================================ -->
+    <record id="action_report_dvsr" model="ir.actions.report">
+        <field name="name">Daily Vehicle Status Report</field>
+        <field name="model">apala.daily.vehicle.status</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">apala_logistics.report_dvsr</field>
+        <field name="report_file">apala_logistics.report_dvsr</field>
+        <field name="binding_model_id" ref="model_apala_daily_vehicle_status"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  QWeb Template: DVSR Report                                  -->
+    <!-- ============================================================ -->
+    <template id="report_dvsr">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- Header -->
+                        <div class="text-center" style="margin-bottom: 20px;">
+                            <h2 style="font-weight: bold;">DAILY VEHICLE STATUS REPORT</h2>
+                            <h4>APALA LOGISTIC CO. LTD</h4>
+                        </div>
+
+                        <!-- Report Info -->
+                        <table class="table table-sm" style="width: 50%;">
+                            <tr>
+                                <td><strong>Reference:</strong></td>
+                                <td><span t-field="o.name"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Report Date:</strong></td>
+                                <td><span t-field="o.report_date"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Prepared By:</strong></td>
+                                <td><span t-field="o.prepared_by"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status:</strong></td>
+                                <td><span t-field="o.state"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Fleet Summary Counts -->
+                        <h5 style="margin-top: 20px; font-weight: bold;">FLEET SUMMARY</h5>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr style="background-color: #003366; color: white;">
+                                    <th>Total Fleet</th>
+                                    <th>Ready for Dispatch</th>
+                                    <th>Minor PM</th>
+                                    <th>Major Breakdown</th>
+                                    <th>Awaiting Parts</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-center">
+                                    <td><span t-field="o.total_fleet_size"/></td>
+                                    <td style="color: green; font-weight: bold;">
+                                        <span t-field="o.vehicles_ready"/></td>
+                                    <td style="color: orange;">
+                                        <span t-field="o.vehicles_minor_pm"/></td>
+                                    <td style="color: red; font-weight: bold;">
+                                        <span t-field="o.vehicles_major"/></td>
+                                    <td style="color: red;">
+                                        <span t-field="o.vehicles_awaiting"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Status Summary by Category -->
+                        <h5 style="margin-top: 20px; font-weight: bold;">STATUS SUMMARY</h5>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr style="background-color: #f0f0f0;">
+                                    <th>Category</th>
+                                    <th>Count</th>
+                                    <th>% of Fleet</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Ready for Dispatch</td>
+                                    <td><span t-field="o.vehicles_ready"/></td>
+                                    <td>
+                                        <t t-if="o.total_fleet_size">
+                                            <t t-esc="'%.0f%%' % (o.vehicles_ready / o.total_fleet_size * 100)"/>
+                                        </t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Minor PM / Service</td>
+                                    <td><span t-field="o.vehicles_minor_pm"/></td>
+                                    <td>
+                                        <t t-if="o.total_fleet_size">
+                                            <t t-esc="'%.0f%%' % (o.vehicles_minor_pm / o.total_fleet_size * 100)"/>
+                                        </t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Major Breakdown</td>
+                                    <td><span t-field="o.vehicles_major"/></td>
+                                    <td>
+                                        <t t-if="o.total_fleet_size">
+                                            <t t-esc="'%.0f%%' % (o.vehicles_major / o.total_fleet_size * 100)"/>
+                                        </t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Awaiting Parts / External</td>
+                                    <td><span t-field="o.vehicles_awaiting"/></td>
+                                    <td>
+                                        <t t-if="o.total_fleet_size">
+                                            <t t-esc="'%.0f%%' % (o.vehicles_awaiting / o.total_fleet_size * 100)"/>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Vehicle Breakdown Table -->
+                        <h5 style="margin-top: 20px; font-weight: bold;">VEHICLE BREAKDOWN</h5>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr style="background-color: #003366; color: white;">
+                                    <th>#</th>
+                                    <th>Vehicle</th>
+                                    <th>Status</th>
+                                    <th>Reason</th>
+                                    <th>Days in Garage</th>
+                                    <th>ETC</th>
+                                    <th>Bottleneck</th>
+                                    <th>Job Card</th>
+                                    <th>Impact</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="counter" t-value="0"/>
+                                <t t-foreach="o.line_ids" t-as="line">
+                                    <t t-set="counter" t-value="counter + 1"/>
+                                    <tr>
+                                        <td><t t-esc="counter"/></td>
+                                        <td><span t-field="line.vehicle_id"/></td>
+                                        <td><span t-field="line.status"/></td>
+                                        <td><span t-field="line.reason_for_stay"/></td>
+                                        <td class="text-center"><span t-field="line.days_in_garage"/></td>
+                                        <td><span t-field="line.etc"/></td>
+                                        <td><span t-field="line.bottleneck"/></td>
+                                        <td><span t-field="line.job_card_id"/></td>
+                                        <td><span t-field="line.impact_level"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Critical Blockers -->
+                        <t t-if="o.critical_blockers">
+                            <h5 style="margin-top: 20px; font-weight: bold; color: red;">
+                                CRITICAL BLOCKERS
+                            </h5>
+                            <div style="border: 1px solid #ccc; padding: 10px; white-space: pre-wrap;">
+                                <span t-field="o.critical_blockers"/>
+                            </div>
+                        </t>
+
+                        <!-- Signature Lines -->
+                        <div style="margin-top: 60px;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="width: 45%; border-bottom: 1px solid #000; padding-bottom: 40px;">
+                                    </td>
+                                    <td style="width: 10%;"></td>
+                                    <td style="width: 45%; border-bottom: 1px solid #000; padding-bottom: 40px;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center"><strong>Prepared By</strong></td>
+                                    <td></td>
+                                    <td class="text-center"><strong>Approved By</strong></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">
+                                        <span t-field="o.prepared_by"/>
+                                    </td>
+                                    <td></td>
+                                    <td class="text-center">
+                                        <span t-field="o.approved_by"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
