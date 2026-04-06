@@ -51,6 +51,14 @@ class ApalaTrip(models.Model):
         string='Advance Balance (TZS)',
         compute='_compute_advance_balance', store=True,
         help='Positive = driver owes company, Negative = company owes driver')
+    # Fuel & Checklists
+    pre_trip_checklist_id = fields.Many2one('apala.driver.checklist', string='Pre-Trip Checklist')
+    post_trip_checklist_id = fields.Many2one('apala.driver.checklist', string='Post-Trip Checklist')
+    fuel_log_ids = fields.One2many('apala.fuel.log', 'trip_id', string='Fuel Logs')
+    fuel_cost_total = fields.Float(
+        string='Total Fuel Cost', compute='_compute_fuel_cost', store=True)
+    cost_per_km = fields.Float(
+        string='Cost per km', compute='_compute_cost_per_km')
     notes = fields.Text(string='Notes')
     attachment_ids = fields.Many2many('ir.attachment', string='Attachments (POD)')
 
@@ -68,6 +76,17 @@ class ApalaTrip(models.Model):
     def _compute_advance_balance(self):
         for rec in self:
             rec.advance_balance = rec.cash_advance_amount - rec.total_expenses - rec.cash_returned_amount
+
+    @api.depends('fuel_log_ids.total_cost')
+    def _compute_fuel_cost(self):
+        for rec in self:
+            rec.fuel_cost_total = sum(rec.fuel_log_ids.mapped('total_cost'))
+
+    @api.depends('total_expenses', 'fuel_cost_total', 'distance_km')
+    def _compute_cost_per_km(self):
+        for rec in self:
+            total = rec.total_expenses + rec.fuel_cost_total
+            rec.cost_per_km = total / rec.distance_km if rec.distance_km else 0
 
     @api.constrains('odometer_end', 'odometer_start')
     def _check_odometer(self):

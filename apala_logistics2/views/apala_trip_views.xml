@@ -20,6 +20,24 @@
                            statusbar_visible="draft,dispatched,en_route,arrived,closed"/>
                 </header>
                 <sheet>
+                    <!-- Smart Buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-check-square-o"
+                                type="object" name="action_dispatch"
+                                attrs="{'invisible': [('pre_trip_checklist_id', '!=', False)]}">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Pre-Trip Check</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-check-square"
+                                type="object" name="action_arrive"
+                                attrs="{'invisible': [('post_trip_checklist_id', '!=', False)]}">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Post-Trip Check</span>
+                            </div>
+                        </button>
+                    </div>
+
                     <div class="oe_title">
                         <h1><field name="name"/></h1>
                     </div>
@@ -107,6 +125,26 @@
                                     <field name="cargo_type"/>
                                     <field name="weight_kg"/>
                                     <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Fuel &amp; Costs">
+                            <group>
+                                <group>
+                                    <field name="fuel_cost_total"/>
+                                    <field name="cost_per_km"/>
+                                </group>
+                                <group>
+                                    <field name="pre_trip_checklist_id"/>
+                                    <field name="post_trip_checklist_id"/>
+                                </group>
+                            </group>
+                            <field name="fuel_log_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="date"/>
+                                    <field name="litres"/>
+                                    <field name="total_cost"/>
+                                    <field name="fuel_station"/>
                                 </tree>
                             </field>
                         </page>

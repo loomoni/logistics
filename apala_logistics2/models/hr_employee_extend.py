@@ -7,6 +7,7 @@ class HrEmployeeExtend(models.Model):
     _inherit = 'hr.employee'
 
     is_driver = fields.Boolean(string='Is Driver', default=False)
+    is_mechanic = fields.Boolean(string='Is Mechanic', default=False)
     driver_licence_no = fields.Char(string='Driver Licence No.')
     licence_class = fields.Selection([
         ('class_b', 'Class B'),

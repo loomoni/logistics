@@ -42,7 +42,7 @@ class ApalaTransportOrder(models.Model):
     vehicle_id = fields.Many2one('fleet.vehicle', string='Assigned Vehicle', tracking=True)
     driver_id = fields.Many2one(
         'hr.employee', string='Driver', tracking=True,
-
+        domain=[('is_driver', '=', True)],
     )
     trip_ids = fields.One2many('apala.trip', 'transport_order_id', string='Trips')
     manifest_ids = fields.One2many('apala.cargo.manifest', 'transport_order_id', string='Cargo Manifests')

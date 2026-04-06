@@ -50,5 +50,53 @@
             <field name="active" eval="True"/>
         </record>
 
+        <!-- Cron 2.5: Check maintenance due (daily) -->
+        <record id="cron_check_maintenance_due" model="ir.cron">
+            <field name="name">Apala: Check Maintenance Due</field>
+            <field name="model_id" ref="model_apala_maintenance_schedule"/>
+            <field name="state">code</field>
+            <field name="code">model.apala_check_maintenance_due()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Cron 2.6: Check spare parts stock levels (daily) -->
+        <record id="cron_check_stock_levels" model="ir.cron">
+            <field name="name">Apala: Check Spare Parts Stock Levels</field>
+            <field name="model_id" ref="model_apala_spare_part"/>
+            <field name="state">code</field>
+            <field name="code">model.apala_check_stock_levels()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Cron 2.7: Refresh customer aging analysis (daily) -->
+        <record id="cron_refresh_aging" model="ir.cron">
+            <field name="name">Apala: Refresh Customer Credit Aging</field>
+            <field name="model_id" ref="model_apala_customer_credit"/>
+            <field name="state">code</field>
+            <field name="code">model.apala_refresh_aging()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Cron 2.8: Auto-generate daily DVSR (daily) -->
+        <record id="cron_auto_generate_dvsr" model="ir.cron">
+            <field name="name">Apala: Auto-Generate Daily Vehicle Status Report</field>
+            <field name="model_id" ref="model_apala_daily_vehicle_status"/>
+            <field name="state">code</field>
+            <field name="code">model.apala_auto_generate_dvsr()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+        </record>
+
     </data>
 </odoo>

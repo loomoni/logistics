@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Apala Logistics',
-    'version': '15.0.1.1.0',
+    'version': '15.0.2.0.0',
     'summary': 'Transport, Freight Forwarding & Cargo Management for Apala Logistic Co. Ltd',
     'description': 'Central Corridor logistics management: transport orders, trips, '
                    'cargo manifests, freight forwarding, customs, storage contracts, '
@@ -36,6 +36,18 @@
         'views/apala_trip_expense_views.xml',
         'views/res_partner_extend_views.xml',
         'views/apala_config_settings_views.xml',
+        # New feature views
+        'views/apala_vehicle_job_card_views.xml',
+        'views/apala_daily_vehicle_status_views.xml',
+        'views/apala_maintenance_schedule_views.xml',
+        'views/apala_fuel_log_views.xml',
+        'views/apala_driver_checklist_views.xml',
+        'views/apala_spare_part_views.xml',
+        'views/apala_customer_credit_views.xml',
+        'views/apala_fleet_vehicle_extend_views.xml',
+        # Reports
+        'report/apala_dvsr_report.xml',
+        'report/apala_job_card_report.xml',
         'views/apala_menu.xml',
         # Wizards
         'wizard/apala_invoice_wizard_views.xml',

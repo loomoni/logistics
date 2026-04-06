@@ -12,3 +12,10 @@ from . import hr_employee_extend
 from . import res_partner_extend
 from . import apala_config_settings
 from . import apala_dashboard
+from . import apala_vehicle_job_card
+from . import apala_daily_vehicle_status
+from . import apala_maintenance_schedule
+from . import apala_fuel_log
+from . import apala_driver_checklist
+from . import apala_spare_part
+from . import apala_customer_credit

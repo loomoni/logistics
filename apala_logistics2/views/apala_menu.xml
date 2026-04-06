@@ -86,6 +86,66 @@
               action="action_apala_trip_expense"
               sequence="10"/>
 
+    <!-- ========== Garage & Maintenance ========== -->
+    <menuitem id="menu_garage_maintenance"
+              name="Garage &amp; Maintenance"
+              parent="menu_apala_logistics_root"
+              sequence="35"/>
+
+    <menuitem id="menu_job_cards"
+              name="Job Cards"
+              parent="menu_garage_maintenance"
+              action="action_apala_vehicle_job_card"
+              sequence="10"/>
+
+    <menuitem id="menu_dvsr"
+              name="Daily Vehicle Status"
+              parent="menu_garage_maintenance"
+              action="action_apala_daily_vehicle_status"
+              sequence="20"/>
+
+    <menuitem id="menu_maintenance_schedules"
+              name="Maintenance Schedules"
+              parent="menu_garage_maintenance"
+              action="action_apala_maintenance_schedule"
+              sequence="30"/>
+
+    <menuitem id="menu_driver_checklists"
+              name="Driver Checklists"
+              parent="menu_garage_maintenance"
+              action="action_apala_driver_checklist"
+              sequence="40"/>
+
+    <menuitem id="menu_fuel_logs"
+              name="Fuel Logs"
+              parent="menu_garage_maintenance"
+              action="action_apala_fuel_log"
+              sequence="50"/>
+
+    <!-- ========== Procurement & Parts ========== -->
+    <menuitem id="menu_procurement_parts"
+              name="Procurement &amp; Parts"
+              parent="menu_apala_logistics_root"
+              sequence="45"/>
+
+    <menuitem id="menu_spare_parts"
+              name="Spare Parts Inventory"
+              parent="menu_procurement_parts"
+              action="action_apala_spare_part"
+              sequence="10"/>
+
+    <!-- ========== Finance & Credit ========== -->
+    <menuitem id="menu_finance_credit"
+              name="Finance &amp; Credit"
+              parent="menu_apala_logistics_root"
+              sequence="50"/>
+
+    <menuitem id="menu_customer_credit"
+              name="Customer Credit Profiles"
+              parent="menu_finance_credit"
+              action="action_apala_customer_credit"
+              sequence="10"/>
+
     <!-- ========== Configuration ========== -->
     <menuitem id="menu_configuration"
               name="Configuration"
